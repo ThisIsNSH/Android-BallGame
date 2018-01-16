@@ -3,6 +3,7 @@ package com.game.nsh;
 import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView scoreLAbel;
     private TextView startLabel;
     private ImageView box,orange,pink,black;
-
+    private int boxY;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,5 +36,14 @@ public class MainActivity extends AppCompatActivity {
         black.setY(-80);
 
         startLabel.setVisibility(View.INVISIBLE);
+         boxY=500;
+    }
+    public boolean onTouchEvent(MotionEvent me) {
+        if(me.getAction()== MotionEvent.ACTION_DOWN)
+        {
+            boxY-=20;
+        }
+        box.setY(boxY);
+        return true;
     }
 }
