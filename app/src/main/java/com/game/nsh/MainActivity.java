@@ -34,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
     private int blackY;
 
 
+    private  int score=0;
+
+
     private Handler handler = new Handler();
     private Timer timer= new Timer();
 
@@ -66,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
         black.setX(-80);
         black.setY(-80);
 
+        scoreLAbel.setText("Score : 0");
+
+
         WindowManager wm = getWindowManager();
         Display disp = wm.getDefaultDisplay();
         Point size = new Point();
@@ -77,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void changePos(){
+        hitCheck();
 orangeX-=12;
 if (orangeX<0){
     orangeX = screenWidth + 20;
@@ -115,15 +122,37 @@ else{
         if (boxY > frameheight - boxSize) boxY = frameheight - boxSize;
         box.setY(boxY);
 
-
+scoreLAbel.setText("Score : "+score);
 
     }
+    public  void hitCheck()
+    {
+        int orangeCenterX= orangeX + orange.getWidth() / 2;
+        int orangeCenterY = orangeY + orange.getHeight() / 2;
+
+        if (0<= orangeCenterX  && orangeCenterX <= boxSize && boxY <=orangeCenterY && orangeCenterY <= boxY + boxSize)
+        {
+            score+=10;
+            orangeX = -10;
+
+        }
+        int pinkCenterX = pinkX + pink.getWidth() / 2;
+        int pinkCenterY = pinkY + pink.getHeight() / 2;
+        if (0<= pinkCenterX  && pinkCenterX <= boxSize && boxY <=pinkCenterY && pinkCenterY <= boxY + boxSize)
+        {
+            score+=30;
+            pinkX = -10;
+
+        }
+
+    }
+
     public boolean onTouchEvent(MotionEvent me) {
        if (start_flg==false)
        {
            start_flg=true;
            FrameLayout frame = (FrameLayout) findViewById(R.id.frame);
-           frameheight= frame.getHeight()
+           frameheight= frame.getHeight();
 
                    boxY = (int) box.getY();
            boxSize=box.getHeight();
