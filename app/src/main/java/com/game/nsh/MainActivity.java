@@ -145,6 +145,17 @@ scoreLAbel.setText("Score : "+score);
 
         }
 
+        int blackCenterX = blackX + black.getWidth() / 2;
+        int blackCenterY = blackY + black.getHeight() / 2;
+        if (0<= blackCenterX && blackCenterX <= boxSize && boxY <=blackCenterY && blackCenterY <= boxY + boxSize)
+        {
+            timer.cancel();
+            timer = null;
+            
+
+        }
+
+
     }
 
     public boolean onTouchEvent(MotionEvent me) {
