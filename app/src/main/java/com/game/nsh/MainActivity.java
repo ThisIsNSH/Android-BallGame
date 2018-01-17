@@ -1,11 +1,13 @@
 package com.game.nsh;
 
+import android.content.Intent;
 import android.graphics.Point;
 import android.media.Image;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -34,8 +36,13 @@ public class MainActivity extends AppCompatActivity {
     private int blackY;
 
 
+    private  int score=0;
+
+
     private Handler handler = new Handler();
     private Timer timer= new Timer();
+
+    private soundPlayer sound;
 
     private int screenWidth;
     private int screenHeight;
@@ -52,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        sound= new soundPlayer(this);
+
         scoreLAbel = (TextView) findViewById(R.id.scoreLabel);
         startLabel = (TextView) findViewById(R.id.startLabel);
         box = (ImageView) findViewById(R.id.box);
@@ -66,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
         black.setX(-80);
         black.setY(-80);
 
+        scoreLAbel.setText("Score : 0");
+
+
         WindowManager wm = getWindowManager();
         Display disp = wm.getDefaultDisplay();
         Point size = new Point();
@@ -77,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void changePos(){
+        hitCheck();
 orangeX-=12;
 if (orangeX<0){
     orangeX = screenWidth + 20;
@@ -115,15 +128,53 @@ else{
         if (boxY > frameheight - boxSize) boxY = frameheight - boxSize;
         box.setY(boxY);
 
+scoreLAbel.setText("Score : "+score);
+
+    }
+    public  void hitCheck()
+    {
+        int orangeCenterX= orangeX + orange.getWidth() / 2;
+        int orangeCenterY = orangeY + orange.getHeight() / 2;
+
+        if (0<= orangeCenterX  && orangeCenterX <= boxSize && boxY <=orangeCenterY && orangeCenterY <= boxY + boxSize)
+        {
+            score+=10;
+            orangeX = -10;
+            sound.playHitSound();
+
+        }
+        int pinkCenterX = pinkX + pink.getWidth() / 2;
+        int pinkCenterY = pinkY + pink.getHeight() / 2;
+        if (0<= pinkCenterX  && pinkCenterX <= boxSize && boxY <=pinkCenterY && pinkCenterY <= boxY + boxSize)
+        {
+            score+=30;
+            pinkX = -10;
+            sound.playHitSound();
+        }
+
+        int blackCenterX = blackX + black.getWidth() / 2;
+        int blackCenterY = blackY + black.getHeight() / 2;
+        if (0<= blackCenterX && blackCenterX <= boxSize && boxY <=blackCenterY && blackCenterY <= boxY + boxSize)
+        {
+            timer.cancel();
+            timer = null;
+            sound.playOverSound();
+
+            Intent intent = new Intent(getApplicationContext(), result.class);
+            intent.putExtra("SCORE", score);
+            startActivity(intent);
+
+        }
 
 
     }
+
     public boolean onTouchEvent(MotionEvent me) {
        if (start_flg==false)
        {
            start_flg=true;
            FrameLayout frame = (FrameLayout) findViewById(R.id.frame);
-           frameheight= frame.getHeight()
+           frameheight= frame.getHeight();
 
                    boxY = (int) box.getY();
            boxSize=box.getHeight();
@@ -156,5 +207,19 @@ else{
            }
        }
         return true;
+    }
+
+    @Override
+    public boolean  dispatchKeyEvent(KeyEvent event)
+    {
+        if (event.getAction() == KeyEvent.ACTION_DOWN){
+            switch(event.getKeyCode())
+            {
+                case KeyEvent.KEYCODE_BACK:
+                    return true;
+            }
+        }
+
+        return super.dispatchKeyEvent(event);
     }
 }
