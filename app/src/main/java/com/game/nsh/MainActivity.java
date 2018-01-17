@@ -1,11 +1,13 @@
 package com.game.nsh;
 
+import android.content.Intent;
 import android.graphics.Point;
 import android.media.Image;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -40,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private Handler handler = new Handler();
     private Timer timer= new Timer();
 
+    private soundPlayer sound;
+
     private int screenWidth;
     private int screenHeight;
 
@@ -54,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        sound= new soundPlayer(this);
 
         scoreLAbel = (TextView) findViewById(R.id.scoreLabel);
         startLabel = (TextView) findViewById(R.id.startLabel);
@@ -134,6 +140,7 @@ scoreLAbel.setText("Score : "+score);
         {
             score+=10;
             orangeX = -10;
+            sound.playHitSound();
 
         }
         int pinkCenterX = pinkX + pink.getWidth() / 2;
@@ -142,7 +149,7 @@ scoreLAbel.setText("Score : "+score);
         {
             score+=30;
             pinkX = -10;
-
+            sound.playHitSound();
         }
 
         int blackCenterX = blackX + black.getWidth() / 2;
@@ -151,7 +158,11 @@ scoreLAbel.setText("Score : "+score);
         {
             timer.cancel();
             timer = null;
-            
+            sound.playOverSound();
+
+            Intent intent = new Intent(getApplicationContext(), result.class);
+            intent.putExtra("SCORE", score);
+            startActivity(intent);
 
         }
 
@@ -196,5 +207,19 @@ scoreLAbel.setText("Score : "+score);
            }
        }
         return true;
+    }
+
+    @Override
+    public boolean  dispatchKeyEvent(KeyEvent event)
+    {
+        if (event.getAction() == KeyEvent.ACTION_DOWN){
+            switch(event.getKeyCode())
+            {
+                case KeyEvent.KEYCODE_BACK:
+                    return true;
+            }
+        }
+
+        return super.dispatchKeyEvent(event);
     }
 }
